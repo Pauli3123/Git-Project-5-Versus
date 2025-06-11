@@ -14,9 +14,11 @@ public class Bullet : MonoBehaviour
 		HealtManager health = collision.gameObject.GetComponent<HealtManager>();
 		if (health != null)
 		{
-			health.TakeDamage(20); // Of elk ander getal
+			health.TakeDamage(20); 
 		}
 
-		Destroy(gameObject); // Verwijder de kogel na impact
+		Destroy(gameObject); 
+
+		
 	}
 }

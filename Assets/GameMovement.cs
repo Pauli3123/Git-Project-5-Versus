@@ -15,7 +15,7 @@ public class GameMovement : MonoBehaviour
 	{
 		
 		movement.x = Input.GetAxisRaw("Horizontal");  // A (-1) <-> D (+1)
-		movement.y = Input.GetAxisRaw("Vertical");    // W (+1) <-> S (-1)
+		
 	}
 
 	void FixedUpdate()
