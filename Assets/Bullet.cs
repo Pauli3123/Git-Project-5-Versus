@@ -11,7 +11,7 @@ public class Bullet : MonoBehaviour
 
 	void OnCollisionEnter2D(Collision2D collision)
 	{
-		HealtManager health = collision.gameObject.GetComponent<HealtManager>();
+		HealthManager health = collision.gameObject.GetComponent<HealthManager>();
 		if (health != null)
 		{
 			health.TakeDamage(20); 
