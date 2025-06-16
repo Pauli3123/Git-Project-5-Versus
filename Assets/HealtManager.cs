@@ -1,24 +1,30 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HealtManager : MonoBehaviour
+public class HealthManager : MonoBehaviour
 {
 	public int maxHealth = 100;
 	private int currentHealth;
 
 	public float respawnDelay = 5f;
-	public Transform respawnPoint; 
+	public Transform respawnPoint;
 
 	private SpriteRenderer spriteRenderer;
 	private Collider2D col;
+	private Rigidbody2D rb;
 
 	public Slider healthBar;
+	private MonoBehaviour[] scriptsToDisable;
 
 	void Start()
 	{
 		currentHealth = maxHealth;
 		spriteRenderer = GetComponent<SpriteRenderer>();
 		col = GetComponent<Collider2D>();
+		rb = GetComponent<Rigidbody2D>();
+
+		// Voeg hier scripts toe die je tijdelijk wilt uitschakelen (bijv. je schietscript)
+		scriptsToDisable = GetComponents<MonoBehaviour>();
 
 		if (healthBar != null)
 		{
@@ -46,32 +52,48 @@ public class HealtManager : MonoBehaviour
 	void Die()
 	{
 		Debug.Log(gameObject.name + " died.");
-	
+
 		spriteRenderer.enabled = false;
 		col.enabled = false;
-		GetComponent<Rigidbody2D>().simulated = false;
-		
-			healthBar.gameObject.SetActive(false);
-		
+		rb.simulated = false;
 
-		Invoke("Respawn", respawnDelay);
+		if (healthBar != null)
+			healthBar.gameObject.SetActive(false);
+
+		// Schakel actieve scripts uit behalve dit script zelf
+		foreach (var script in scriptsToDisable)
+		{
+			if (script != this)
+				script.enabled = false;
+		}
+
+		Invoke(nameof(Respawn), respawnDelay);
 	}
 
 	void Respawn()
 	{
 		currentHealth = maxHealth;
 
-		// Zet speler terug op de respawnlocatie
 		if (respawnPoint != null)
-		{
 			transform.position = respawnPoint.position;
-		}
 
-		// Re-enable visueel en botsing
 		spriteRenderer.enabled = true;
 		col.enabled = true;
-		GetComponent<Rigidbody2D>().simulated = true;
+		rb.simulated = true;
+
+		if (healthBar != null)
+		{
+			healthBar.value = currentHealth;
+			healthBar.gameObject.SetActive(true);
+		}
+
+		foreach (var script in scriptsToDisable)
+		{
+			if (script != this)
+				script.enabled = true;
+		}
 
 		Debug.Log(gameObject.name + " respawned.");
 	}
 }
+
