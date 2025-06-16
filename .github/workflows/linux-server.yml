@@ -1,0 +1,29 @@
+name: Build Linux Server
+
+on:
+  push:
+    branches: [ dev, main ]
+
+jobs:
+  build-server:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Cache Unity packages
+        uses: actions/cache@v3
+        with:
+          path: Library
+          key: ${{ runner.os }}-unity-library-${{ hashFiles('**/Packages/manifest.json') }}
+      - name: Setup Unity
+        uses: game-ci/unity-builder@v2
+        with:
+          targetPlatform: Linux
+          buildName: PixelArenaServer
+          unityVersion: 2022.3.x # match your project
+          buildPath: Builds/LinuxServer
+          buildLinuxHeadless: true
+      - name: Upload Server Build
+        uses: actions/upload-artifact@v3
+        with:
+          name: pixelarena-linux-server
+          path: Builds/LinuxServer
