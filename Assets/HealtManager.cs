@@ -16,6 +16,15 @@ public class HealthManager : MonoBehaviour
 	public Slider healthBar;
 	private MonoBehaviour[] scriptsToDisable;
 
+	public enum ControlType { player1, player2 }
+	public ControlType controlType = ControlType.player1;
+
+	public int player1deaths = 0;
+	public int player2deaths = 0;
+
+	public int player1kills = 0;
+	public int player2kills = 0;
+
 	void Start()
 	{
 		currentHealth = maxHealth;
@@ -23,7 +32,7 @@ public class HealthManager : MonoBehaviour
 		col = GetComponent<Collider2D>();
 		rb = GetComponent<Rigidbody2D>();
 
-		// Voeg hier scripts toe die je tijdelijk wilt uitschakelen (bijv. je schietscript)
+
 		scriptsToDisable = GetComponents<MonoBehaviour>();
 
 		if (healthBar != null)
@@ -51,6 +60,24 @@ public class HealthManager : MonoBehaviour
 
 	void Die()
 	{
+		switch (controlType)
+		{
+			case ControlType.player1:
+				player1deaths++;
+				player2kills++;
+				Debug.Log("Player 1 has died " + player1deaths + "times");
+				Debug.Log("Player 2 has " + player2kills + "kills");
+				break;
+
+			case ControlType.player2:
+				player2deaths++;
+				player1kills++;
+				Debug.Log("Player 2 has died " + player2deaths + "times");
+				Debug.Log("Player 1 has " + player1kills + "kills");
+				break;
+		}
+
+			
 		Debug.Log(gameObject.name + " died.");
 
 		spriteRenderer.enabled = false;

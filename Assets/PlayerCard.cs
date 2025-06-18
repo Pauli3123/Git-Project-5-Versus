@@ -7,15 +7,12 @@ public class PlayerCard : MonoBehaviour
 
 	void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.Tab))
-		{
-			scoreboardUI.SetActive(true);
-		}
-
-		if (Input.GetKeyUp(KeyCode.Tab))
+		while (Input.GetKeyDown(KeyCode.Tab))
 		{
 			scoreboardUI.SetActive(false);
 		}
+
+		
 	}
 
 }

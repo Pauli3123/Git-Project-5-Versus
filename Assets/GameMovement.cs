@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class GameMovement : MonoBehaviour
 {
-	public enum ControlType { AWSD, Arrows }
-	public ControlType controlType = ControlType.AWSD;
+	public enum ControlType { player1, player2 }
+	public ControlType controlType = ControlType.player1;
 
 	public float moveSpeed = 5f;
 	public float jumpForce = 7f;
@@ -30,7 +30,7 @@ public class GameMovement : MonoBehaviour
 		
 		switch (controlType)
 		{
-			case ControlType.AWSD:
+			case ControlType.player1:
 				movement.x = (Input.GetKey(KeyCode.A) ? -1 : 0) + (Input.GetKey(KeyCode.D) ? 1 : 0);
 				if (Input.GetKeyDown(KeyCode.W) && isGrounded)
 				{
@@ -38,7 +38,7 @@ public class GameMovement : MonoBehaviour
 				}
 				break;
 
-			case ControlType.Arrows:
+			case ControlType.player2:
 				movement.x = (Input.GetKey(KeyCode.LeftArrow) ? -1 : 0) + (Input.GetKey(KeyCode.RightArrow) ? 1 : 0);
 				if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded)
 				{
@@ -59,8 +59,8 @@ public class GameMovement : MonoBehaviour
 
 		bool JumpKeyHeld()
 	{
-		return (controlType == ControlType.AWSD && Input.GetKey(KeyCode.W)) ||
-			   (controlType == ControlType.Arrows && Input.GetKey(KeyCode.UpArrow));
+		return (controlType == ControlType.player1 && Input.GetKey(KeyCode.W)) ||
+			   (controlType == ControlType.player2 && Input.GetKey(KeyCode.UpArrow));
 	}
 
 	void OnDrawGizmosSelected()
