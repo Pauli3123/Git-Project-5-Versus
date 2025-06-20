@@ -10,9 +10,6 @@ public class GameMovement : MonoBehaviour
 	public Transform groundCheck;
 	public LayerMask groundLayer;
 
-
-	public float fallMultiplier = 2.5f;
-	public float lowJumpMultiplier = 2f;
 	public float normalGravity = 1f;
 
 	private Rigidbody2D rb;
@@ -57,19 +54,6 @@ public class GameMovement : MonoBehaviour
 		rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
 	}
 
-		bool JumpKeyHeld()
-	{
-		return (controlType == ControlType.player1 && Input.GetKey(KeyCode.W)) ||
-			   (controlType == ControlType.player2 && Input.GetKey(KeyCode.UpArrow));
-	}
 
-	void OnDrawGizmosSelected()
-	{
-		if (groundCheck != null)
-		{
-			Gizmos.color = Color.red;
-			Gizmos.DrawWireSphere(groundCheck.position, 0.1f);
-		}
-	}
 }
 
