@@ -10,7 +10,7 @@ public class Login : MonoBehaviour
 	public TMP_InputField passwordInput;
 
 
-	private string loginUrl = "https://jouw-api-url.com/login";
+	private string loginUrl = "http://192.168.132.129:5215/Auth/Login";
 
 
 

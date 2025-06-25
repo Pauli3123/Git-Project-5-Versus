@@ -19,11 +19,6 @@ public class HealthManager : MonoBehaviour
 	public enum ControlType { player1, player2 }
 	public ControlType controlType = ControlType.player1;
 
-	public int player1deaths = 0;
-	public int player2deaths = 0;
-
-	public int player1kills = 0;
-	public int player2kills = 0;
 
 	void Start()
 	{
@@ -60,24 +55,14 @@ public class HealthManager : MonoBehaviour
 
 	void Die()
 	{
-		switch (controlType)
-		{
-			case ControlType.player1:
-				player1deaths++;
-				player2kills++;
-				Debug.Log("Player 1 has died " + player1deaths + "times");
-				Debug.Log("Player 2 has " + player2kills + "kills");
-				break;
+		PlayerStats.Instance.RegisterDeath(controlType);
 
-			case ControlType.player2:
-				player2deaths++;
-				player1kills++;
-				Debug.Log("Player 2 has died " + player2deaths + "times");
-				Debug.Log("Player 1 has " + player1kills + "kills");
-				break;
-		}
+		if (controlType == ControlType.player1)
+			PlayerStats.Instance.RegisterKill(ControlType.player2);
+		else if (controlType == ControlType.player2)
+			PlayerStats.Instance.RegisterKill(ControlType.player1);
 
-			
+
 		Debug.Log(gameObject.name + " died.");
 
 		spriteRenderer.enabled = false;
@@ -87,7 +72,7 @@ public class HealthManager : MonoBehaviour
 		if (healthBar != null)
 			healthBar.gameObject.SetActive(false);
 
-		// Schakel actieve scripts uit behalve dit script zelf
+
 		foreach (var script in scriptsToDisable)
 		{
 			if (script != this)
