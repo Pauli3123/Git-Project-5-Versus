@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// ===== Base BT Classes =====
 
 public enum NodeState { Running, Success, Failure }
 
@@ -75,17 +74,25 @@ public class ActionNode : Node {
     }
 }
 
-// ===== Bot AI =====
 
-public class BotAI : MonoBehaviour
-{
+public class BotAI : MonoBehaviour {
     private Node _root;
 
-    public Transform target;                
-    public float viewDistance = 10f;       
-    public float moveSpeed = 2f;           
-    public float wanderRadius = 5f;        
-    public float wanderInterval = 3f;      
+    [Header("Target Settings")]
+    public Transform target;
+
+    [Header("Vision Settings")]
+    public float viewDistance = 10f;
+
+    [Header("Movement Settings")]
+    public float moveSpeed = 2f;
+    public float wanderRadius = 5f;
+    public float wanderInterval = 3f;
+
+    [Header("Shooting Settings")]
+    public GameObject bulletPrefab;
+    public Transform bulletSpawnPoint;
+    public float bulletSpeed = 10f;
 
     private Vector2 _wanderTarget;
     private float _wanderTimer;
@@ -122,6 +129,17 @@ public class BotAI : MonoBehaviour
     }
 
     private NodeState ShootEnemy() {
+        if (target == null || bulletPrefab == null || bulletSpawnPoint == null)
+            return NodeState.Failure;
+
+        Vector2 direction = (target.position - bulletSpawnPoint.position).normalized;
+
+        GameObject bullet = Instantiate(bulletPrefab, bulletSpawnPoint.position, Quaternion.identity);
+        Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
+        if (rb != null) {
+            rb.linearVelocity = direction * bulletSpeed;
+        }
+
         Debug.Log("Shooting at enemy!");
         return NodeState.Success;
     }
@@ -129,21 +147,26 @@ public class BotAI : MonoBehaviour
     private NodeState Patrol() {
         _wanderTimer += Time.deltaTime;
 
-        if (_wanderTimer >= wanderInterval || Vector2.Distance(transform.position, _wanderTarget) < 0.1f) {
+        if (_wanderTimer >= wanderInterval || Mathf.Abs(transform.position.x - _wanderTarget.x) < 0.1f) {
             PickNewWanderTarget();
             _wanderTimer = 0f;
         }
 
-        
-        transform.position = Vector2.MoveTowards(transform.position, _wanderTarget, moveSpeed * Time.deltaTime);
+        Vector2 targetPosition = new Vector2(_wanderTarget.x, transform.position.y);
+        transform.position = Vector2.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
+
+        if (_wanderTarget.x > transform.position.x)
+            transform.localScale = new Vector3(1, 1, 1);
+        else
+            transform.localScale = new Vector3(-1, 1, 1);
 
         Debug.Log("Wandering...");
         return NodeState.Running;
     }
 
     private void PickNewWanderTarget() {
-        Vector2 randomDirection = Random.insideUnitCircle.normalized * wanderRadius;
-        _wanderTarget = (Vector2)transform.position + randomDirection;
+        float randomOffset = Random.Range(-wanderRadius, wanderRadius);
+        _wanderTarget = new Vector2(transform.position.x + randomOffset, transform.position.y);
         Debug.Log("New wander target: " + _wanderTarget);
     }
 }
